@@ -3,6 +3,7 @@ package org.cuatrovientos.dam.psp;
 public class Tamagotchi implements Runnable{
     private static final long INTERVALO_SUCIEDAD = 1000;
     private static final long TIEMPO_VIDA = 15000;
+    private static final long TICK = 100;
 
     private final String nombre;
     private int suciedad = 0;
@@ -16,18 +17,23 @@ public class Tamagotchi implements Runnable{
     public void run() {
         System.out.println("¡El tamagotchi " + nombre + " ha nacido!");
         long horaNacimiento = System.currentTimeMillis();
+        long ultimaSuciedad = horaNacimiento;
 
         while (vivo){
             try {
-                Thread.sleep(INTERVALO_SUCIEDAD);
-                suciedad++;
-                System.out.println("Tamagotchi " + nombre + " suciedad " + suciedad);
+                Thread.sleep(TICK);
 
-                if (suciedad == 5){
-                    System.out.println(nombre + ": estoy muy sucio...");
-                } else if (suciedad == 10) {
-                    System.out.println(nombre + ": muerto de suciedad...");
-                    vivo = false;
+                if ((System.currentTimeMillis() - ultimaSuciedad) >= INTERVALO_SUCIEDAD){
+                    suciedad++;
+                    System.out.println(nombre + " suciedad " + suciedad);
+                    ultimaSuciedad = System.currentTimeMillis();
+
+                    if (suciedad == 5){
+                        System.out.println(nombre + ": estoy muy sucio...");
+                    } else if (suciedad == 10) {
+                        System.out.println(nombre + ": muerto de suciedad...");
+                        vivo = false;
+                    }
                 }
 
                 if ((System.currentTimeMillis() - horaNacimiento) >= TIEMPO_VIDA){
