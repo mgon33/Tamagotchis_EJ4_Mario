@@ -1,7 +1,7 @@
 package org.cuatrovientos.dam.psp;
 
 public class Main {
-    public static void main(String[] args) throws InterruptedException{
+    public static void main(String[] args) throws InterruptedException {
 
         int numTamagotchis = 3;
 
@@ -17,10 +17,14 @@ public class Main {
             listaHilos[i].start();
         }
 
-         Thread.sleep(2000);
-
-        for (Tamagotchi t: listaTamagotchis){
+        Thread.sleep(2000);
+        for (Tamagotchi t : listaTamagotchis) {
             t.comer();
+        }
+
+        Thread.sleep(6000);
+        for (Tamagotchi t : listaTamagotchis) {
+            t.limpiar();
         }
     }
 }

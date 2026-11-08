@@ -2,8 +2,9 @@ package org.cuatrovientos.dam.psp;
 
 public class Tamagotchi implements Runnable{
     private static final long INTERVALO_SUCIEDAD = 3000;
-    private static final long TIEMPO_VIDA = 15000;
+    private static final long TIEMPO_VIDA = 30000;
     private static final long TICK = 100;
+    private static final long TIEMPO_BANO = 5000;
 
     private final String nombre;
     private final long tiempoComer;
@@ -18,7 +19,7 @@ public class Tamagotchi implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("¡El tamagotchi " + nombre + " ha nacido!(come en " + tiempoComer + " ms)");
+        System.out.println("¡El tamagotchi " + nombre + " ha nacido! (come en " + tiempoComer + " ms)");
         long horaNacimiento = System.currentTimeMillis();
         long ultimaSuciedad = horaNacimiento;
 
@@ -51,6 +52,15 @@ public class Tamagotchi implements Runnable{
                     accion = null;
                 }
 
+                if ("limpiar".equals(accion) && vivo){
+                    System.out.println(nombre + " empieza a bañarse...");
+                    Thread.sleep(TIEMPO_BANO);
+                    suciedad = 0;
+                    ultimaSuciedad = System.currentTimeMillis();
+                    System.out.println(nombre + " está limpio (suciedad 0)");
+                    accion = null;
+                }
+
             } catch (InterruptedException e){
                 System.out.println(nombre + " ha sido interrumpido");
             }
@@ -64,6 +74,15 @@ public class Tamagotchi implements Runnable{
         } else {
             accion = "comer";
             System.out.println("El cuidador le da de comer a " + nombre);
+        }
+    }
+
+    public synchronized void limpiar() {
+        if (accion != null) {
+            System.out.println(nombre + " está ocupado (" + accion + "), no puede bañarse ahora");
+        } else {
+            accion = "limpiar";
+            System.out.println("El cuidador baña a " + nombre);
         }
     }
 }
