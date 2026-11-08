@@ -1,8 +1,8 @@
 package org.cuatrovientos.dam.psp;
 
 public class Tamagotchi implements Runnable{
-    private static final long INTERVALO_SUCIEDAD = 3000;
-    private static final long TIEMPO_VIDA = 60000;
+    private static final long INTERVALO_SUCIEDAD = 20000;
+    private static final long TIEMPO_VIDA = 300000;
     private static final long TICK = 100;
     private static final long TIEMPO_BANO = 5000;
 
@@ -24,7 +24,7 @@ public class Tamagotchi implements Runnable{
         long horaNacimiento = System.currentTimeMillis();
         long ultimaSuciedad = horaNacimiento;
 
-        while (vivo){
+        while (estaVivo()){
             try {
                 Thread.sleep(TICK);
 
@@ -70,7 +70,9 @@ public class Tamagotchi implements Runnable{
     }
 
     public synchronized void comer() {
-        if (accion != null) {
+        if (!vivo) {
+            System.out.println(nombre + " está muerto, no puede comer");
+        } else if (accion != null) {
             System.out.println(nombre + " está ocupado (" + accion + "), no puede comer ahora");
         } else {
             accion = "comer";
@@ -79,7 +81,9 @@ public class Tamagotchi implements Runnable{
     }
 
     public synchronized void limpiar() {
-        if (accion != null) {
+        if (!vivo) {
+            System.out.println(nombre + " está muerto, no puede bañarse");
+        } else if (accion != null) {
             System.out.println(nombre + " está ocupado (" + accion + "), no puede bañarse ahora");
         } else {
             accion = "limpiar";
@@ -88,7 +92,9 @@ public class Tamagotchi implements Runnable{
     }
 
     public synchronized void jugar() {
-        if (accion != null) {
+        if (!vivo) {
+            System.out.println(nombre + " está muerto, no puede jugar");
+        } else if (accion != null) {
             System.out.println(nombre + " está ocupado (" + accion + "), no puede jugar ahora");
         } else {
             accion = "jugar";
@@ -121,5 +127,28 @@ public class Tamagotchi implements Runnable{
 
     public synchronized boolean estaJugando() {
         return vivo && "jugar".equals(accion);
+    }
+
+    public synchronized boolean estaVivo() {
+        return vivo;
+    }
+
+    public synchronized String getEstado() {
+        if (!vivo) {
+            return nombre + " | MUERTO";
+        }
+        String haciendo = (accion == null) ? "ocioso" : "haciendo: " + accion;
+        return nombre + " | vivo | suciedad " + suciedad + " | " + haciendo;
+    }
+
+    public synchronized void matar() {
+        if (!vivo) {
+            System.out.println(nombre + " ya está muerto");
+        } else if (accion != null) {
+            System.out.println(nombre + " está ocupado (" + accion + "), no atiende a la destrucción");
+        } else {
+            vivo = false;
+            System.out.println("El cuidador ha matado a " + nombre);
+        }
     }
 }
