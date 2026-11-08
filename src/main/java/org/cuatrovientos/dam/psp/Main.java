@@ -1,5 +1,7 @@
 package org.cuatrovientos.dam.psp;
 
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) throws InterruptedException {
 
@@ -25,6 +27,17 @@ public class Main {
         Thread.sleep(6000);
         for (Tamagotchi t : listaTamagotchis) {
             t.limpiar();
+        }
+
+        Thread.sleep(6000);
+        Scanner sc = new Scanner(System.in);
+
+        for (Tamagotchi t : listaTamagotchis) {
+            t.jugar();
+            while (t.estaJugando()) {
+                int respuesta = sc.nextInt();
+                t.responder(respuesta);
+            }
         }
     }
 }

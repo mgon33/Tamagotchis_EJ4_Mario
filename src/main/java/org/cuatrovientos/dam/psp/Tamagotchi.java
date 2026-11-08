@@ -2,7 +2,7 @@ package org.cuatrovientos.dam.psp;
 
 public class Tamagotchi implements Runnable{
     private static final long INTERVALO_SUCIEDAD = 3000;
-    private static final long TIEMPO_VIDA = 30000;
+    private static final long TIEMPO_VIDA = 60000;
     private static final long TICK = 100;
     private static final long TIEMPO_BANO = 5000;
 
@@ -11,6 +11,7 @@ public class Tamagotchi implements Runnable{
     private int suciedad = 0;
     private boolean vivo = true;
     private String accion;
+    private int resultadoSuma;
 
     public Tamagotchi(String nombre, long tiempoComer){
         this.nombre = nombre;
@@ -84,5 +85,41 @@ public class Tamagotchi implements Runnable{
             accion = "limpiar";
             System.out.println("El cuidador baña a " + nombre);
         }
+    }
+
+    public synchronized void jugar() {
+        if (accion != null) {
+            System.out.println(nombre + " está ocupado (" + accion + "), no puede jugar ahora");
+        } else {
+            accion = "jugar";
+            System.out.println("El cuidador juega con " + nombre);
+            nuevaSuma();
+        }
+    }
+
+    private void nuevaSuma() {
+        int a = (int) (Math.random() * 8) + 1;
+        int b = (int) (Math.random() * (9 - a)) + 1;
+        resultadoSuma = a + b;
+        System.out.println(nombre + " pregunta: ¿Cuánto es " + a + " + " + b + "?");
+    }
+
+    public synchronized void responder(int respuesta) {
+        if (!"jugar".equals(accion)) {
+            System.out.println(nombre + " no está jugando");
+            return;
+        }
+
+        if (respuesta == resultadoSuma) {
+            System.out.println(nombre + ": ¡Correcto! ¡Qué bien me lo he pasado!");
+            accion = null;
+        } else {
+            System.out.println(nombre + ": ¡Incorrecto! Sigo jugando");
+            nuevaSuma();
+        }
+    }
+
+    public synchronized boolean estaJugando() {
+        return vivo && "jugar".equals(accion);
     }
 }
